@@ -1,0 +1,20 @@
+{
+  "name": "clickneat",
+  "version": "1.0.0",
+  "description": "Restaurant chatbot",
+  "homepage": "https://github.com/shy-programmer/ClicknEat#readme",
+  "bugs": {
+    "url": "https://github.com/shy-programmer/ClicknEat/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shy-programmer/ClicknEat.git"
+  },
+  "license": "ISC",
+  "author": "Abdulazeez Arowolo (Shy Programmer)",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
