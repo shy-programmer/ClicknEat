@@ -1,0 +1,24 @@
+import mongoose, {Document, Schema, Model} from "mongoose";
+
+type SessionState = 'IDLE' | 'ITEM_SELECTION' | 'CURRENT_ORDER' | 'ORDER_HISTORY' | 'MAKING_PAYMENT';
+
+export interface ISession extends Document {
+    sessionId: string;
+    state: SessionState;
+    choiceMap: Record<string, string>;
+    currentOrderId?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
+
+const sessionSchema: Schema<ISession> = new Schema(
+    {
+        sessionId: { type: String, required: true, unique: true },
+        state: {type: String, required: true, enum: ['IDLE', 'ITEM_SELECTION', 'CURRENT_ORDER', 'ORDER_HISTORY', 'MAKING_PAYMENT'], default: 'IDLE'},
+        choiceMap: {type: Schema.Types.Mixed, default: {}},
+        currentOrderId: {type: mongoose.Schema.Types.ObjectId, ref: 'Order'}
+    },
+    { timestamps: true }
+);
+
+export const Session: Model<ISession> = mongoose.model<ISession>("Session", sessionSchema);
