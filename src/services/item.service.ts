@@ -1,6 +1,6 @@
 import { Item, IItem } from "../models/item.model";
 
-export class ItemService {
+class ItemService {
     async createItem(name: string, price: number, isAvailable: boolean = true) {
         const newItem: IItem = await Item.create({ name, price, isAvailable });
         return {
@@ -82,3 +82,5 @@ export class ItemService {
         };
     }
 }
+
+export const itemService = new ItemService();

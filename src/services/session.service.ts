@@ -1,6 +1,6 @@
 import {Session, ISession} from "../models/session.model";
 
-export class SessionService {
+class SessionService {
     async getOrCreateSession(sessionId: string) {
         let session: ISession | null = await Session.findOne({ sessionId });
         if (!session) {
@@ -71,3 +71,5 @@ export class SessionService {
     }
     
 }
+
+export const sessionService = new SessionService();

@@ -2,7 +2,7 @@ import {Order, IOrder, IOrderItem} from "../models/order.model";
 import {Item, IItem} from "../models/item.model";
 import mongoose from "mongoose";
 
-export class OrderService {
+class OrderService {
     async createOrder(sessionId: string, items: IOrderItem[]) {
         let total = 0;
         for (const orderItem of items) {
@@ -111,3 +111,5 @@ export class OrderService {
     }
 
 }
+
+export const orderService = new OrderService();

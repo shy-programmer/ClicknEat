@@ -1,14 +1,13 @@
 import {IItem} from "../models/item.model";
 import {IOrder, IOrderItem} from "../models/order.model";
-import {ISession} from "../models/session.model";
 
-type returnedValue = {
+type MenuResponse = {
     message: string,
     choiceMap: Record<string, string>
 };
 
-export class menuBuilder {
-    async buildMainMenu(): Promise<returnedValue> {
+class MenuBuilder {
+    async buildMainMenu(): Promise<MenuResponse> {
         return {
             message: `Welcome to ClicknEat!\n
             Select 1 to Place an order\n
@@ -26,7 +25,7 @@ export class menuBuilder {
         }
     }
 
-    async buildItemSelectionMenu(items: IItem[]): Promise<returnedValue> {
+    async buildItemSelectionMenu(items: IItem[]): Promise<MenuResponse> {
         let message = `Please select an item to add to your order:\n`;
         const choiceMap: Record<string, string> = {};
         items.forEach((item, i) => {
@@ -39,7 +38,7 @@ export class menuBuilder {
         return { message, choiceMap };
     }
 
-    async buildItemAddedMenu(item: IItem): Promise<returnedValue> {
+    async buildItemAddedMenu(item: IItem): Promise<MenuResponse> {
         const message = `${item.name} has been added to your order.\n
         Select 1 to add more items.\n
         Select 99 to checkout order.\n
@@ -54,7 +53,7 @@ export class menuBuilder {
         return { message, choiceMap };
     }
 
-    async buildOrderCheckoutMenu(total: number): Promise<returnedValue> {
+    async buildOrderCheckoutMenu(total: number): Promise<MenuResponse> {
         const message = `Your order total is $${total}.\n
         Select 1 to proceed to payment.\n
         Select 10 to cancel order.\n
@@ -67,7 +66,7 @@ export class menuBuilder {
         return { message, choiceMap };
     }
 
-    async buildOrderHistoryMenu(orders: IOrder[]): Promise<returnedValue> {
+    async buildOrderHistoryMenu(orders: IOrder[]): Promise<MenuResponse> {
         let message = `Your Order History:\n`;
         orders.forEach((order, i) => {
             message += `Order ${i + 1} [${order.items}] - $${order.total} - ${order.status}\n\n`;
@@ -79,7 +78,7 @@ export class menuBuilder {
         return { message, choiceMap };
     }
 
-    async buildCurrentOrderMenu(order: IOrder): Promise<returnedValue> {
+    async buildCurrentOrderMenu(order: IOrder): Promise<MenuResponse> {
         let message = `Your Current Order:\n`;
         order.items.forEach((orderItem, i) => {
             message += `Item ${i + 1} [${orderItem.itemId}] x${orderItem.quantity}\n`;
@@ -96,10 +95,12 @@ export class menuBuilder {
         return { message, choiceMap };
     }
 
-    async buildInvalidOptionMenu(): Promise<returnedValue> {
+    async buildInvalidOptionMenu(): Promise<MenuResponse> {
         return {
             message: `Invalid option selected. Please try again.`,
             choiceMap: {}
         };
     }
     }
+
+    export const menuBuilder = new MenuBuilder();
