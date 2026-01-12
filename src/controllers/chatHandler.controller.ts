@@ -49,7 +49,7 @@ export const ChatHandlerController = async (
 
             if (!session.currentOrderId) {
                 const newOrder = await orderService.createOrder(sessionId, {
-                    itemId,
+                    itemId: item._id,
                     quantity: 1
                 });
                 const orderId = newOrder._id.toString();
@@ -67,7 +67,7 @@ export const ChatHandlerController = async (
                 });
             } else {
                 await orderService.addItemsToOrder(session.currentOrderId, {
-                    itemId,
+                    itemId: item._id,
                     quantity: 1
                 });
                 const menu = await menuBuilder.buildItemAddedMenu(item);
