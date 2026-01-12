@@ -1,113 +1,82 @@
 import {Order, IOrder, IOrderItem} from "../models/order.model";
 import {Item, IItem} from "../models/item.model";
+import {Session, ISession} from "../models/session.model";
 import mongoose from "mongoose";
 
 class OrderService {
-    async createOrder(sessionId: string, items: IOrderItem[]) {
+    async createOrder(sessionId: string, items: IOrderItem) {
         let total = 0;
-        for (const orderItem of items) {
-            const item: IItem | null = await Item.findById(orderItem.itemId);
+        const {itemId} = items;
+            const item: IItem | null = await Item.findById(itemId);
             if (!item) {
-                return {
-                    code: 404,
-                    message: `Item with ID ${orderItem.itemId} not found`
-                };
+                throw new Error("Item not found");
             }
-            total += item.price * orderItem.quantity;
-        }
+            total += item.price;
 
-        const newOrder: IOrder = await Order.create({ sessionId, items, total });
-        return {
-            code: 201,
-            data: newOrder,
-            message: "Order created successfully"
-        };
+        const newOrder: IOrder = await Order.create({ sessionId, items: [items], total });
+        await Session.findOneAndUpdate(
+            { sessionId },
+            { currentOrderId: newOrder._id }
+        );
+        return newOrder;
     }
 
-    async addItemsToOrder(orderId: string, newItems: IOrderItem[]) {
+    async addItemsToOrder(orderId: string, newItems: IOrderItem) {
         const order: IOrder | null = await Order.findById(orderId);
         if (!order) {
-            return {
-                code: 404,
-                message: "Order not found"
-            };
+            throw new Error("Order not found");
         }
         let additionalTotal = 0;
-        for (const orderItem of newItems) {
-            const item: IItem | null = await Item.findById(orderItem.itemId);
+
+            const item: IItem | null = await Item.findById(newItems.itemId);
             if (!item) {
-                return {
-                    code: 404,
-                    message: `Item with ID ${orderItem.itemId} not found`
-                };
+                throw new Error(`Item with ID ${newItems.itemId} not found`);
             }
-            additionalTotal += item.price * orderItem.quantity;
-            order.items.push(orderItem);
-        }
+            additionalTotal += item.price * newItems.quantity;
+            if (order.items.some(oi => oi.itemId.toString() === newItems.itemId.toString())) {
+                const existingOrderItem = order.items.find(oi => oi.itemId.toString() === newItems.itemId.toString());
+                if (existingOrderItem) {
+                    existingOrderItem.quantity += newItems.quantity;
+                }
+            } else {
+                order.items.push(newItems);
+            }
         order.total += additionalTotal;
         await order.save();
-        return {
-            code: 200,
-            data: order,
-            message: "Items added to order successfully"
-        };
+        return order;
     }
 
 
     async getCurrentOrder(sessionId: string) {
         const order: IOrder | null = await Order.findOne({ sessionId, status: "pending" });
         if (!order) {
-            return {
-                code: 404,
-                message: "No current order found for this session"
-            };
+            throw new Error("No current order found");
         }
-        return {
-            code: 200,
-            data: order,
-            message: "Current order retrieved successfully"
-        };
+        return order;
     }
 
     async getOrderHistory(sessionId: string) {
         const orders: IOrder[] = await Order.find({ sessionId});
-        return {
-            code: 200,
-            data: orders,
-            message: "Order history retrieved successfully"
-        };
+        return orders;
     }
     
 
     async payOrder(orderId: string) {
         const order: IOrder | null = await Order.findById(orderId);
         if (!order) {
-            return {
-                code: 404,
-                message: "Order not found"
-            };
+            throw new Error("Order not found");
         }
         order.status = "paid";
         await order.save();
-        return {
-            code: 200,
-            data: order,
-            message: "Order paid successfully"
-        };
+        return order;
     }
 
     async deleteOrder(orderId: string) {
         const order: IOrder | null = await Order.findByIdAndDelete(orderId);
         if (!order) {
-            return {
-                code: 404,
-                message: "Order not found"
-            };
+            throw new Error("Order not found");
         }
-        return {
-            code: 200,
-            message: "Order deleted successfully"
-        };
+        return;
     }
 
 }

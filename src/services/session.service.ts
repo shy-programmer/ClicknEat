@@ -6,11 +6,7 @@ class SessionService {
         if (!session) {
             session = await Session.create({ sessionId }); 
         }
-        return {
-            code: 200,
-            data: session,
-            message: "Session retrieved successfully"
-        };
+        return session
     }
 
     async updateSessionState(sessionId: string, newState: ISession["state"]) {
@@ -25,11 +21,7 @@ class SessionService {
                 message: "Session not found"
             };
         }
-        return {
-            code: 200,
-            data: session,
-            message: "Session state updated successfully"
-        };
+        return session;
     }
 
     async updateSessionChoiceMap(sessionId: string, choiceMap: Record<string, string>) {
@@ -44,11 +36,7 @@ class SessionService {
                 message: "Session not found"
             };
         }
-        return {
-            code: 200,
-            data: session,
-            message: "Session choice map updated successfully"
-        };
+        return session;
     }
 
     async setCurrentOrderId(sessionId: string, orderId: string) {
@@ -63,11 +51,7 @@ class SessionService {
                 message: "Session not found"
             };
         }
-        return {
-            code: 200,
-            data: session,
-            message: "Session current order ID updated successfully"
-        };
+        return session;
     }
     
 }

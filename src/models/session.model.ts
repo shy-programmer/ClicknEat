@@ -1,6 +1,6 @@
 import mongoose, {Document, Schema, Model} from "mongoose";
 
-type SessionState = 'IDLE' | 'ITEM_SELECTION' | 'CURRENT_ORDER' | 'ORDER_HISTORY' | 'CHECKOUT_ORDER' | 'MAKING_PAYMENT';
+type SessionState = 'MAIN_MENU' | 'ITEM_SELECTION' | 'ITEM_ADDED' | 'CURRENT_ORDER' | 'ORDER_HISTORY' | 'CHECKOUT_ORDER' | 'MAKING_PAYMENT';
 
 export interface ISession extends Document {
     sessionId: string;
@@ -14,7 +14,7 @@ export interface ISession extends Document {
 const sessionSchema: Schema<ISession> = new Schema(
     {
         sessionId: { type: String, required: true, unique: true },
-        state: {type: String, required: true, enum: ['IDLE', 'ITEM_SELECTION', 'CURRENT_ORDER', 'ORDER_HISTORY', 'CHECKOUT_ORDER', 'MAKING_PAYMENT'], default: 'IDLE'},
+        state: {type: String, required: true, enum: ['MAIN_MENU', 'ITEM_SELECTION', 'ITEM_ADDED', 'CURRENT_ORDER', 'ORDER_HISTORY', 'CHECKOUT_ORDER', 'MAKING_PAYMENT'], default: 'MAIN_MENU'},
         choiceMap: {type: Schema.Types.Mixed, default: {}},
         currentOrderId: {type: mongoose.Schema.Types.ObjectId, ref: 'Order'}
     },
