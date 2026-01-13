@@ -6,15 +6,15 @@ const userSchema = new Schema({
     password: { type: String, required: true },
     role: { type: String, enum: ["admin", "staff"], default: "staff" },
 }, { timestamps: true });
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
     if (!this.isModified("password"))
-        return next();
+        return; //next();
     try {
         this.password = await bcrypt.hash(this.password, 10);
-        next();
+        //next();
     }
     catch (err) {
-        next(err);
+        //next(err as any);
     }
 });
 userSchema.methods.isValidPassword = async function (candidatePassword) {

@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema, Model, Types } from "mongoose";
-import { IItem } from "./item.model";
+import { IItem } from "./item.model.js";
 
 export interface IOrderItem {
   itemId: Types.ObjectId //| IItem;

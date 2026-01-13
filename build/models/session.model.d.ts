@@ -1,5 +1,5 @@
 import { Document, Model } from "mongoose";
-type SessionState = 'IDLE' | 'ITEM_SELECTION' | 'CURRENT_ORDER' | 'ORDER_HISTORY' | 'MAKING_PAYMENT';
+type SessionState = 'MAIN_MENU' | 'ITEM_SELECTION' | 'ITEM_ADDED' | 'CURRENT_ORDER' | 'ORDER_HISTORY' | 'CHECKOUT_ORDER' | 'MAKING_PAYMENT';
 export interface ISession extends Document {
     sessionId: string;
     state: SessionState;

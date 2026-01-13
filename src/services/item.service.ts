@@ -1,5 +1,4 @@
-import { it } from "node:test";
-import { Item, IItem } from "../models/item.model";
+import { Item, IItem } from "../models/item.model.js";
 
 class ItemService {
     async createItem(name: string, price: number, isAvailable: boolean = true) {

@@ -17,8 +17,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf build && tsc",
-    "start": "node index.js",
-    "start:dev": "nodemon index.js",
+    "start": "node ./build/index.js",
+    "start:dev": "nodemon ./build/index.js",
     "start:ts": "ts-node ./src/index.ts"
   },
   "devDependencies": {
@@ -32,6 +32,8 @@
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mongoose": "^9.1.3"
   }
 }

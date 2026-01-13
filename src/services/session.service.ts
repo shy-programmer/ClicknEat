@@ -1,4 +1,4 @@
-import {Session, ISession} from "../models/session.model";
+import {Session, ISession} from "../models/session.model.js";
 
 class SessionService {
     async getOrCreateSession(sessionId: string) {

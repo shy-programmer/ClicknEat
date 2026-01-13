@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { sessionService } from "../services/session.service";
-import { itemService } from "../services/item.service";
-import { orderService } from "../services/order.service";
-import { menuBuilder } from "../utils/menuBuilder";
+import { sessionService } from "../services/session.service.js";
+import { itemService } from "../services/item.service.js";
+import { orderService } from "../services/order.service.js";
+import { menuBuilder } from "../utils/menuBuilder.js";
 
 interface ChatRequestBody {
     sessionId: string;
@@ -17,6 +17,8 @@ export const ChatHandlerController = async (
         const { sessionId, text } = req.body
 
         const session = await sessionService.getOrCreateSession(sessionId);
+        console.log("Current Session State:", session.state);
+        console.log("Current Choice Map:", session.choiceMap);
 
 
         if (!text) {
