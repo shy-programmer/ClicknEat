@@ -54,12 +54,15 @@ class MenuBuilder {
     }
 
     async buildOrderCheckoutMenu(total: number): Promise<MenuResponse> {
-        const message = `Your order total is $${total}.\n
+        const message = `Order placed.\n
+        Your order total is $${total}.\n
         Select 1 to proceed to payment.\n
+        Select 97 to see current order.\n
         Select 10 to cancel order.\n
         Select 0 to go back to main menu.`;
         const choiceMap: Record<string, string> = {
             "1": "MAKING_PAYMENT",
+            "97": "CURRENT_ORDER",
             "10": "CANCEL_ORDER",
             "0": "MAIN_MENU"
         };
@@ -69,7 +72,10 @@ class MenuBuilder {
     async buildOrderHistoryMenu(orders: IOrder[]): Promise<MenuResponse> {
         let message = `Your Order History:\n`;
         orders.forEach((order, i) => {
-            message += `Order ${i + 1} [${order.items}] - $${order.total} - ${order.status}\n\n`;
+            const itemNames = order.items.map(oi => {
+                return typeof oi.itemId === 'object' ? (oi.itemId as any).name : 'Unknown Item';
+            }).join(", ");
+            message += `Order ${i + 1}: Items: [${itemNames}] - Total: $${order.total} - Status: ${order.status}\n`;
         });
         message += `Select 0 to go back to main menu.`;
         const choiceMap: Record<string, string> = {
@@ -80,8 +86,11 @@ class MenuBuilder {
 
     async buildCurrentOrderMenu(order: IOrder): Promise<MenuResponse> {
         let message = `Your Current Order:\n`;
+        console.log("Building current order menu for order:", order);
         order.items.forEach((orderItem, i) => {
-            message += `Item ${i + 1} [${orderItem.itemId}] x${orderItem.quantity}\n`;
+            const itemName = typeof orderItem.itemId === 'object' ? (orderItem.itemId as any).name : 'Unknown Item';
+            const itemPrice = typeof orderItem.itemId === 'object' ? (orderItem.itemId as any).price : 0;
+            message += `Item ${i + 1}: ${itemName} - $${itemPrice} x ${orderItem.quantity}\n`;
         });
         message += `Total: $${order.total}\n\n
         Select 99 to checkout order.\n

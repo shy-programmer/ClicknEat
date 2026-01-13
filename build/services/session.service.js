@@ -37,6 +37,16 @@ class SessionService {
         }
         return session;
     }
+    async clearCurrentOrderId(sessionId) {
+        const session = await Session.findOneAndUpdate({ sessionId }, { currentOrderId: null }, { new: true });
+        if (!session) {
+            return {
+                code: 404,
+                message: "Session not found"
+            };
+        }
+        return session;
+    }
 }
 export const sessionService = new SessionService();
 //# sourceMappingURL=session.service.js.map

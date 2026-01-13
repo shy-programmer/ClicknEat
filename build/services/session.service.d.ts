@@ -13,6 +13,10 @@ declare class SessionService {
         code: number;
         message: string;
     }>;
+    clearCurrentOrderId(sessionId: string): Promise<ISession | {
+        code: number;
+        message: string;
+    }>;
 }
 export declare const sessionService: SessionService;
 export {};

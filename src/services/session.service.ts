@@ -53,6 +53,21 @@ class SessionService {
         }
         return session;
     }
+
+    async clearCurrentOrderId(sessionId: string) {
+        const session: ISession | null = await Session.findOneAndUpdate(
+            { sessionId },
+            { currentOrderId: null },
+            { new: true }
+        );
+        if (!session) {
+            return {
+                code: 404,
+                message: "Session not found"
+            };
+        }
+        return session;
+    }
     
 }
 

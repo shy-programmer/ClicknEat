@@ -48,7 +48,8 @@ class OrderService {
 
 
     async getCurrentOrder(sessionId: string) {
-        const order: IOrder | null = await Order.findOne({ sessionId, status: "pending" });
+        console.log("Fetching current order for session:", sessionId);
+        const order: IOrder | null = await Order.findOne({ sessionId, status: "pending" }).populate('items.itemId');
         if (!order) {
             throw new Error("No current order found");
         }
@@ -56,7 +57,7 @@ class OrderService {
     }
 
     async getOrderHistory(sessionId: string) {
-        const orders: IOrder[] = await Order.find({ sessionId});
+        const orders: IOrder[] = await Order.find({sessionId, status: { $in: ["paid"] } }).populate('items.itemId');
         return orders;
     }
     
