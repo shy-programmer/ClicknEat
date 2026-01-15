@@ -10,11 +10,12 @@ class MenuBuilder {
     async buildMainMenu(): Promise<MenuResponse> {
         return {
             message: `Welcome to ClicknEat!\n
-            Select 1 to Place an order\n
-            Select 99 to checkout order\n
-            Select 98 to see order history\n
-            Select 97 to see current order\n
-            Select 0 to cancel order`,
+            Select an option:\n
+            1 to Place an order\n
+            99 to checkout order\n
+            98 to see order history\n
+            97 to see current order\n
+            0 to cancel order`,
             choiceMap: {
                 "1": "ITEM_SELECTION",
                 "99": "CHECKOUT_ORDER",
@@ -30,7 +31,7 @@ class MenuBuilder {
         const choiceMap: Record<string, string> = {};
         items.forEach((item, i) => {
             const choiceNumber = i + 1;
-            message += `Select ${choiceNumber} for ${item.name} - $${item.price}\n`;
+            message += `${choiceNumber} for ${item.name} - ₦${item.price}\n`;
             choiceMap[choiceNumber.toString()] = item._id.toString();
         });
         message += `Select 0 to go back to main menu.`;
@@ -40,13 +41,16 @@ class MenuBuilder {
 
     async buildItemAddedMenu(item: IItem): Promise<MenuResponse> {
         const message = `${item.name} has been added to your order.\n
-        Select 1 to add more items.\n
-        Select 99 to checkout order.\n
-        Select 10 to cancel order.\n
-        Select 0 to go back to main menu.`;
+        Select an option:\n
+        1 to add more items.\n
+        99 to checkout order.\n
+        97 to see current order.\n
+        10 to cancel order.\n
+        0 to go back to main menu.`;
         const choiceMap: Record<string, string> = {
             "1": "ITEM_SELECTION",
             "99": "CHECKOUT_ORDER",
+            "97": "CURRENT_ORDER",
             "10": "CANCEL_ORDER",
             "0": "MAIN_MENU"
         };
@@ -55,11 +59,12 @@ class MenuBuilder {
 
     async buildOrderCheckoutMenu(total: number): Promise<MenuResponse> {
         const message = `Order placed.\n
-        Your order total is $${total}.\n
-        Select 1 to proceed to payment.\n
-        Select 97 to see current order.\n
-        Select 10 to cancel order.\n
-        Select 0 to go back to main menu.`;
+        Your order total is ₦${total}.\n
+        Select an option:\n
+        1 to proceed to payment.\n
+        97 to see current order.\n
+        10 to cancel order.\n
+        0 to go back to main menu.`;
         const choiceMap: Record<string, string> = {
             "1": "MAKING_PAYMENT",
             "97": "CURRENT_ORDER",
@@ -73,9 +78,9 @@ class MenuBuilder {
         let message = `Your Order History:\n`;
         orders.forEach((order, i) => {
             const itemNames = order.items.map(oi => {
-                return typeof oi.itemId === 'object' ? (oi.itemId as any).name : 'Unknown Item';
+                return typeof oi.itemId === 'object' ? `${(oi.itemId as any).name} x${oi.quantity}` : 'Unknown Item';
             }).join(", ");
-            message += `Order ${i + 1}: Items: [${itemNames}] - Total: $${order.total} - Status: ${order.status}\n`;
+            message += `${i + 1}: [${itemNames}] - ₦${order.total} - ${order.status}\n`;
         });
         message += `Select 0 to go back to main menu.`;
         const choiceMap: Record<string, string> = {
@@ -86,13 +91,12 @@ class MenuBuilder {
 
     async buildCurrentOrderMenu(order: IOrder): Promise<MenuResponse> {
         let message = `Your Current Order:\n`;
-        console.log("Building current order menu for order:", order);
         order.items.forEach((orderItem, i) => {
             const itemName = typeof orderItem.itemId === 'object' ? (orderItem.itemId as any).name : 'Unknown Item';
             const itemPrice = typeof orderItem.itemId === 'object' ? (orderItem.itemId as any).price : 0;
-            message += `Item ${i + 1}: ${itemName} - $${itemPrice} x ${orderItem.quantity}\n`;
+            message += `Item ${i + 1}: ${itemName} - ₦${itemPrice} x ${orderItem.quantity}\n`;
         });
-        message += `Total: $${order.total}\n\n
+        message += `Total: ₦${order.total}\n\n
         Select 99 to checkout order.\n
         Select 10 to cancel order.\n
         Select 0 to go back to main menu.`;

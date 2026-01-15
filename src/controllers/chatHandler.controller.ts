@@ -15,15 +15,8 @@ export const ChatHandlerController = async (
 ) => {
     try {
         const { sessionId, text } = req.body
-        console.log("Received chat message:", { sessionId, text });
-
         const session = await sessionService.getOrCreateSession(sessionId);
 
-        const consoler =  () => {
-            console.log("Session State:", session.state);
-            console.log("Session Choice Map:", session.choiceMap);
-        }
-        
 
         if (!text) {
             const menu = await menuBuilder.buildMainMenu();
@@ -31,7 +24,6 @@ export const ChatHandlerController = async (
             session.choiceMap = menu.choiceMap;
 
             await session.save();
-            consoler();
             return res.status(200).json({
                 response: menu.message
             })
@@ -40,7 +32,6 @@ export const ChatHandlerController = async (
 
         if (!action) {
             const invalidMenu = await menuBuilder.buildInvalidOptionMenu();
-            consoler();
             return res.status(200).json({
                 response: invalidMenu.message
             })
@@ -52,7 +43,7 @@ export const ChatHandlerController = async (
             const item = await itemService.getItemById(itemId);
             if (!item) {
                 const invalidMenu = await menuBuilder.buildInvalidOptionMenu();
-                consoler();
+
                 return res.status(200).json({ response: invalidMenu.message });
             }
 
@@ -64,7 +55,7 @@ export const ChatHandlerController = async (
                 const orderId = newOrder._id.toString();
                 if (!orderId) {
                     const invalidMenu = await menuBuilder.buildInvalidOptionMenu();
-                    consoler();
+    
                     return res.status(200).json({ response: invalidMenu.message });
                 }
                 await sessionService.setCurrentOrderId(sessionId, orderId);
@@ -72,7 +63,7 @@ export const ChatHandlerController = async (
                 session.state = "ITEM_ADDED";
                 session.choiceMap = menu.choiceMap;
                 await session.save();
-                consoler();
+
                 return res.status(200).json({
                     response: menu.message
                 });
@@ -85,7 +76,7 @@ export const ChatHandlerController = async (
                 session.state = "ITEM_ADDED";
                 session.choiceMap = menu.choiceMap;
                 await session.save();
-                consoler();
+
                 return res.status(200).json({
                     response: menu.message
                 });
@@ -94,156 +85,159 @@ export const ChatHandlerController = async (
         }
 
         switch (action) {
-        case "ITEM_SELECTION": {
-            const items = await itemService.getAvailableItems();
-            console.log("Available Items:", items);
-            const menu = await menuBuilder.buildItemSelectionMenu(items);
-            session.state = "ITEM_SELECTION";
-            session.choiceMap = menu.choiceMap;
-            await session.save();
-            consoler();
-            return res.status(200).json({
-                response: menu.message
-            })
-        }
+            case "ITEM_SELECTION": {
+                const items = await itemService.getAvailableItems();
+                const menu = await menuBuilder.buildItemSelectionMenu(items);
+                session.state = "ITEM_SELECTION";
+                session.choiceMap = menu.choiceMap;
+                await session.save();
 
-        case "MAIN_MENU": {
-            const menu = await menuBuilder.buildMainMenu();
-            session.state = "MAIN_MENU";
-            session.choiceMap = menu.choiceMap;
-            await session.save();
-            consoler();
-            return res.status(200).json({
-                response: menu.message
-            })
-        }
+                return res.status(200).json({
+                    response: menu.message
+                })
+            }
 
-        case "CHECKOUT_ORDER": {
-            if (!session.currentOrderId) {
+            case "MAIN_MENU": {
                 const menu = await menuBuilder.buildMainMenu();
                 session.state = "MAIN_MENU";
                 session.choiceMap = menu.choiceMap;
                 await session.save();
-                const response = `No order to place. Returning to main menu.\n\n${menu.message}`;
-                consoler();
+
                 return res.status(200).json({
-                    response
-                });
+                    response: menu.message
+                })
             }
 
-            const currentOrder = await orderService.getCurrentOrder(sessionId);
-            
-            const menu = await menuBuilder.buildOrderCheckoutMenu(currentOrder.total);
-            session.state = "CHECKOUT_ORDER";
-            session.choiceMap = menu.choiceMap;
-            await session.save();
-            consoler();
-            return res.status(200).json({
-                response: menu.message
-            });
-        }
-
-        case "ORDER_HISTORY": {
-            const orderHistory = await orderService.getOrderHistory(sessionId);
-            const orders = orderHistory;
-            const menu = await menuBuilder.buildOrderHistoryMenu(orders);
-            session.state = "ORDER_HISTORY";
-            session.choiceMap = menu.choiceMap;
-            await session.save();
-            consoler();
-            return res.status(200).json({
-                response: menu.message
-            });
-        }
-
-        case "CURRENT_ORDER": {
-            if (!session.currentOrderId) {
-                const menu = await menuBuilder.buildMainMenu();
-                session.state = "MAIN_MENU";
-                session.choiceMap = menu.choiceMap;
-                await session.save();
-                const response = `No current order found. Returning to main menu.\n\n${menu.message}`;
-                consoler();
-                return res.status(200).json({
-                    response
-                });
-            }
-
-            const currentOrder = (await orderService.getCurrentOrder(sessionId));
-            if (!currentOrder) {
-                const menu = await menuBuilder.buildMainMenu();
-                session.state = "MAIN_MENU";
-                session.choiceMap = menu.choiceMap;
-                await session.save();
-                const response = `No current order found. Returning to main menu.\n\n${menu.message}`;
-                consoler();
-                return res.status(200).json({
-                    response
-                });
-            }
-
-            const menu = await menuBuilder.buildCurrentOrderMenu(currentOrder);
-            session.state = "CURRENT_ORDER";
-            session.choiceMap = menu.choiceMap;
-            await session.save();
-            consoler();
-            return res.status(200).json({
-                response: menu.message
-            });
-        }
-
-        case "MAKING_PAYMENT": {
-            if (!session.currentOrderId) {
-                const menu = await menuBuilder.buildMainMenu();
-                session.state = "MAIN_MENU";
-                session.choiceMap = menu.choiceMap;
-                await session.save();
-                const response = `No current order found. Returning to main menu.\n\n${menu.message}`;
-                consoler();
-                return res.status(200).json({
-                    response
-                });
-            }
-            const paidOrder = await orderService.payOrder(session.currentOrderId);
-            await sessionService.clearCurrentOrderId(sessionId);
-            const menu = await menuBuilder.buildMainMenu();
-            session.state = "MAIN_MENU";
-            session.choiceMap = menu.choiceMap;
-            await session.save();
-            const response = `Your order has been paid successfully! Returning to main menu.\n\n${menu.message}`;
-            consoler();
-            return res.status(200).json({
-                response
-            });
-        }
-
-        case "CANCEL_ORDER": {
-            if (session.currentOrderId) {
-                await orderService.deleteOrder(session.currentOrderId);
-                await sessionService.clearCurrentOrderId(sessionId);
-            }
-            const menu = await menuBuilder.buildMainMenu();
-            session.state = "MAIN_MENU";
-            session.choiceMap = menu.choiceMap;
-            await session.save();
-            const response = `Your order has been cancelled. Returning to main menu.\n\n${menu.message}`;
-            consoler();
-            return res.status(200).json({
-                response
-            });
-        }
-
-        default: {
-            const invalidMenu = await menuBuilder.buildInvalidOptionMenu();
-            consoler();
-            return res.status(200).json({
-                response: invalidMenu.message
-            })
-        }
-    }
+            case "CHECKOUT_ORDER": {
+                if (!session.currentOrderId) {
+                    const menu = await menuBuilder.buildMainMenu();
+                    session.state = "MAIN_MENU";
+                    session.choiceMap = menu.choiceMap;
+                    await session.save();
+                    const response = `No order to place. Returning to main menu.\n\n${menu.message}`;
     
-} catch (error) {
-    console.error(error);
-    res.status(500).send("Something went wrong");
-}
+                    return res.status(200).json({
+                        response
+                    });
+                }
+
+                const currentOrder = await orderService.getCurrentOrder(sessionId);
+
+                const menu = await menuBuilder.buildOrderCheckoutMenu(currentOrder.total);
+                session.state = "CHECKOUT_ORDER";
+                session.choiceMap = menu.choiceMap;
+                await session.save();
+
+                return res.status(200).json({
+                    response: menu.message
+                });
+            }
+
+            case "ORDER_HISTORY": {
+                const orderHistory = await orderService.getOrderHistory(sessionId);
+                const orders = orderHistory;
+                const menu = await menuBuilder.buildOrderHistoryMenu(orders);
+                session.state = "ORDER_HISTORY";
+                session.choiceMap = menu.choiceMap;
+                await session.save();
+
+                return res.status(200).json({
+                    response: menu.message
+                });
+            }
+
+            case "CURRENT_ORDER": {
+                if (!session.currentOrderId) {
+                    const menu = await menuBuilder.buildMainMenu();
+                    session.state = "MAIN_MENU";
+                    session.choiceMap = menu.choiceMap;
+                    await session.save();
+                    const response = `No current order found. Returning to main menu.\n\n${menu.message}`;
+    
+                    return res.status(200).json({
+                        response
+                    });
+                }
+
+                const currentOrder = (await orderService.getCurrentOrder(sessionId));
+                if (!currentOrder) {
+                    const menu = await menuBuilder.buildMainMenu();
+                    session.state = "MAIN_MENU";
+                    session.choiceMap = menu.choiceMap;
+                    await session.save();
+                    const response = `No current order found. Returning to main menu.\n\n${menu.message}`;
+    
+                    return res.status(200).json({
+                        response
+                    });
+                }
+
+                const menu = await menuBuilder.buildCurrentOrderMenu(currentOrder);
+                session.state = "CURRENT_ORDER";
+                session.choiceMap = menu.choiceMap;
+                await session.save();
+
+                return res.status(200).json({
+                    response: menu.message
+                });
+            }
+
+            case "MAKING_PAYMENT": {
+                if (!session.currentOrderId) {
+                    const menu = await menuBuilder.buildMainMenu();
+                    session.state = "MAIN_MENU";
+                    session.choiceMap = menu.choiceMap;
+                    await session.save();
+                    const response = `No current order found. Returning to main menu.\n\n${menu.message}`;
+    
+                    return res.status(200).json({
+                        response
+                    });
+                }
+                const paidOrder = await orderService.payOrder(session.currentOrderId);
+                await sessionService.clearCurrentOrderId(sessionId);
+                const menu = await menuBuilder.buildMainMenu();
+                session.state = "MAIN_MENU";
+                session.choiceMap = menu.choiceMap;
+                await session.save();
+                const response = `Your order has been paid successfully! Returning to main menu.\n\n${menu.message}`;
+
+                return res.status(200).json({
+                    response
+                });
+            }
+
+            case "CANCEL_ORDER": {
+                const menu = await menuBuilder.buildMainMenu();
+                session.state = "MAIN_MENU";
+                session.choiceMap = menu.choiceMap;
+                await session.save();
+                let response: string;
+                if (session.currentOrderId) {
+                    await orderService.cancelOrder(session.currentOrderId);
+                    await sessionService.clearCurrentOrderId(sessionId);
+                    response = `Your order has been cancelled. Returning to main menu.\n\n${menu.message}`;
+    
+                } else {
+                    response = `No current order to cancel. Returning to main menu.\n\n${menu.message}`;
+    
+                }
+                return res.status(200).json({
+                        response
+                    });
+            }
+
+            default: {
+                const invalidMenu = await menuBuilder.buildInvalidOptionMenu();
+
+                return res.status(200).json({
+                    response: invalidMenu.message
+                })
+            }
+        }
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Something went wrong");
+    }
 }

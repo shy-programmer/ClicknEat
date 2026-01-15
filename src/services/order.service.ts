@@ -48,7 +48,6 @@ class OrderService {
 
 
     async getCurrentOrder(sessionId: string) {
-        console.log("Fetching current order for session:", sessionId);
         const order: IOrder | null = await Order.findOne({ sessionId, status: "pending" }).populate('items.itemId');
         if (!order) {
             throw new Error("No current order found");
@@ -57,7 +56,7 @@ class OrderService {
     }
 
     async getOrderHistory(sessionId: string) {
-        const orders: IOrder[] = await Order.find({sessionId, status: { $in: ["paid"] } }).populate('items.itemId');
+        const orders: IOrder[] = await Order.find({sessionId, status: { $in: ["paid", "cancelled"] } }).populate('items.itemId');
         return orders;
     }
     
@@ -72,8 +71,8 @@ class OrderService {
         return order;
     }
 
-    async deleteOrder(orderId: string) {
-        const order: IOrder | null = await Order.findByIdAndDelete(orderId);
+    async cancelOrder(orderId: string) {
+        const order: IOrder | null = await Order.findByIdAndUpdate(orderId, { status: "cancelled" }, { new: true });
         if (!order) {
             throw new Error("Order not found");
         }
