@@ -2,11 +2,12 @@ class MenuBuilder {
     async buildMainMenu() {
         return {
             message: `Welcome to ClicknEat!\n
-            Select 1 to Place an order\n
-            Select 99 to checkout order\n
-            Select 98 to see order history\n
-            Select 97 to see current order\n
-            Select 0 to cancel order`,
+            Select an option:\n
+            1 to Place an order\n
+            99 to checkout order\n
+            98 to see order history\n
+            97 to see current order\n
+            0 to cancel order`,
             choiceMap: {
                 "1": "ITEM_SELECTION",
                 "99": "CHECKOUT_ORDER",
@@ -17,11 +18,11 @@ class MenuBuilder {
         };
     }
     async buildItemSelectionMenu(items) {
-        let message = `Please select an item to add to your order:\n`;
+        let message = `Please select an item to add to your order:\n\n`;
         const choiceMap = {};
         items.forEach((item, i) => {
             const choiceNumber = i + 1;
-            message += `Select ${choiceNumber} for ${item.name} - $${item.price}\n`;
+            message += `${choiceNumber} for ${item.name} - ₦${item.price}\n\n`;
             choiceMap[choiceNumber.toString()] = item._id.toString();
         });
         message += `Select 0 to go back to main menu.`;
@@ -30,13 +31,16 @@ class MenuBuilder {
     }
     async buildItemAddedMenu(item) {
         const message = `${item.name} has been added to your order.\n
-        Select 1 to add more items.\n
-        Select 99 to checkout order.\n
-        Select 10 to cancel order.\n
-        Select 0 to go back to main menu.`;
+        Select an option:\n
+        1 to add more items.\n
+        99 to checkout order.\n
+        97 to see current order.\n
+        10 to cancel order.\n
+        0 to go back to main menu.`;
         const choiceMap = {
             "1": "ITEM_SELECTION",
             "99": "CHECKOUT_ORDER",
+            "97": "CURRENT_ORDER",
             "10": "CANCEL_ORDER",
             "0": "MAIN_MENU"
         };
@@ -44,11 +48,12 @@ class MenuBuilder {
     }
     async buildOrderCheckoutMenu(total) {
         const message = `Order placed.\n
-        Your order total is $${total}.\n
-        Select 1 to proceed to payment.\n
-        Select 97 to see current order.\n
-        Select 10 to cancel order.\n
-        Select 0 to go back to main menu.`;
+        Your order total is ₦${total}.\n
+        Select an option:\n
+        1 to proceed to payment.\n
+        97 to see current order.\n
+        10 to cancel order.\n
+        0 to go back to main menu.`;
         const choiceMap = {
             "1": "MAKING_PAYMENT",
             "97": "CURRENT_ORDER",
@@ -57,13 +62,22 @@ class MenuBuilder {
         };
         return { message, choiceMap };
     }
+    async buildPaymentMenu(authorizationUrl) {
+        const message = `To complete your payment, please visit the following URL:\n
+        ${authorizationUrl} \n
+        Select 0 to return to the main menu.`;
+        const choiceMap = {
+            "0": "MAIN_MENU"
+        };
+        return { message, choiceMap };
+    }
     async buildOrderHistoryMenu(orders) {
-        let message = `Your Order History:\n`;
+        let message = `Your Order History:\n\n`;
         orders.forEach((order, i) => {
             const itemNames = order.items.map(oi => {
-                return typeof oi.itemId === 'object' ? oi.itemId.name : 'Unknown Item';
+                return typeof oi.itemId === 'object' ? `${oi.itemId.name} x${oi.quantity}` : 'Unknown Item';
             }).join(", ");
-            message += `Order ${i + 1}: Items: [${itemNames}] - Total: $${order.total} - Status: ${order.status}\n`;
+            message += `${i + 1}: [${itemNames}] - ₦${order.total} - ${order.status}\n\n`;
         });
         message += `Select 0 to go back to main menu.`;
         const choiceMap = {
@@ -73,13 +87,12 @@ class MenuBuilder {
     }
     async buildCurrentOrderMenu(order) {
         let message = `Your Current Order:\n`;
-        console.log("Building current order menu for order:", order);
         order.items.forEach((orderItem, i) => {
             const itemName = typeof orderItem.itemId === 'object' ? orderItem.itemId.name : 'Unknown Item';
             const itemPrice = typeof orderItem.itemId === 'object' ? orderItem.itemId.price : 0;
-            message += `Item ${i + 1}: ${itemName} - $${itemPrice} x ${orderItem.quantity}\n`;
+            message += `Item ${i + 1}: ${itemName} - ₦${itemPrice} x ${orderItem.quantity}\n`;
         });
-        message += `Total: $${order.total}\n\n
+        message += `Total: ₦${order.total}\n\n
         Select 99 to checkout order.\n
         Select 10 to cancel order.\n
         Select 0 to go back to main menu.`;

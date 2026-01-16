@@ -27,11 +27,11 @@ class MenuBuilder {
     }
 
     async buildItemSelectionMenu(items: IItem[]): Promise<MenuResponse> {
-        let message = `Please select an item to add to your order:\n`;
+        let message = `Please select an item to add to your order:\n\n`;
         const choiceMap: Record<string, string> = {};
         items.forEach((item, i) => {
             const choiceNumber = i + 1;
-            message += `${choiceNumber} for ${item.name} - ₦${item.price}\n`;
+            message += `${choiceNumber} for ${item.name} - ₦${item.price}\n\n`;
             choiceMap[choiceNumber.toString()] = item._id.toString();
         });
         message += `Select 0 to go back to main menu.`;
@@ -74,13 +74,23 @@ class MenuBuilder {
         return { message, choiceMap };
     }
 
+    async buildPaymentMenu(authorizationUrl: string): Promise<MenuResponse> {
+        const message = `To complete your payment, please visit the following URL:\n
+        ${authorizationUrl} \n
+        Select 0 to return to the main menu.`;
+        const choiceMap: Record<string, string> = {
+            "0": "MAIN_MENU"
+        };
+        return { message, choiceMap };
+    }
+
     async buildOrderHistoryMenu(orders: IOrder[]): Promise<MenuResponse> {
-        let message = `Your Order History:\n`;
+        let message = `Your Order History:\n\n`;
         orders.forEach((order, i) => {
             const itemNames = order.items.map(oi => {
                 return typeof oi.itemId === 'object' ? `${(oi.itemId as any).name} x${oi.quantity}` : 'Unknown Item';
             }).join(", ");
-            message += `${i + 1}: [${itemNames}] - ₦${order.total} - ${order.status}\n`;
+            message += `${i + 1}: [${itemNames}] - ₦${order.total} - ${order.status}\n\n`;
         });
         message += `Select 0 to go back to main menu.`;
         const choiceMap: Record<string, string> = {

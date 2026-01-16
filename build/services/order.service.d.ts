@@ -4,8 +4,14 @@ declare class OrderService {
     addItemsToOrder(orderId: string, newItems: IOrderItem): Promise<IOrder>;
     getCurrentOrder(sessionId: string): Promise<IOrder>;
     getOrderHistory(sessionId: string): Promise<IOrder[]>;
+    getOrderById(orderId: string): Promise<IOrder>;
+    getOrderByReference(reference: string): Promise<IOrder>;
+    attachPaymentDetails(orderId: string, paymentDetails: {
+        reference: string;
+        authorizationUrl: string;
+    }): Promise<IOrder>;
     payOrder(orderId: string): Promise<IOrder>;
-    deleteOrder(orderId: string): Promise<void>;
+    cancelOrder(orderId: string): Promise<void>;
 }
 export declare const orderService: OrderService;
 export {};

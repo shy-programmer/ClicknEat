@@ -39,7 +39,6 @@ class OrderService {
         return order;
     }
     async getCurrentOrder(sessionId) {
-        console.log("Fetching current order for session:", sessionId);
         const order = await Order.findOne({ sessionId, status: "pending" }).populate('items.itemId');
         if (!order) {
             throw new Error("No current order found");
@@ -47,8 +46,30 @@ class OrderService {
         return order;
     }
     async getOrderHistory(sessionId) {
-        const orders = await Order.find({ sessionId, status: { $in: ["paid"] } }).populate('items.itemId');
+        const orders = await Order.find({ sessionId, status: { $in: ["paid", "cancelled"] } }).populate('items.itemId');
         return orders;
+    }
+    async getOrderById(orderId) {
+        const order = await Order.findById(orderId).populate('items.itemId');
+        if (!order) {
+            throw new Error("Order not found");
+        }
+        return order;
+    }
+    async getOrderByReference(reference) {
+        const order = await Order.findOne({ paymentReference: reference });
+        if (!order) {
+            throw new Error("Order not found");
+        }
+        return order;
+    }
+    async attachPaymentDetails(orderId, paymentDetails) {
+        const { reference, authorizationUrl } = paymentDetails;
+        const order = await Order.findByIdAndUpdate(orderId, { paymentReference: reference, paymentLink: authorizationUrl }, { new: true });
+        if (!order) {
+            throw new Error("Order not found");
+        }
+        return order;
     }
     async payOrder(orderId) {
         const order = await Order.findById(orderId);
@@ -59,8 +80,8 @@ class OrderService {
         await order.save();
         return order;
     }
-    async deleteOrder(orderId) {
-        const order = await Order.findByIdAndDelete(orderId);
+    async cancelOrder(orderId) {
+        const order = await Order.findByIdAndUpdate(orderId, { status: "cancelled" }, { new: true });
         if (!order) {
             throw new Error("Order not found");
         }

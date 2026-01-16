@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { sessionService } from "../services/session.service.js";
 import { itemService } from "../services/item.service.js";
 import { orderService } from "../services/order.service.js";
+import { paymentService } from "../services/payment.service.js";
 import { menuBuilder } from "../utils/menuBuilder.js";
 
 interface ChatRequestBody {
@@ -16,6 +17,23 @@ export const ChatHandlerController = async (
     try {
         const { sessionId, text } = req.body
         const session = await sessionService.getOrCreateSession(sessionId);
+
+        if (session.currentOrderId) {
+            const order = await orderService.getOrderById(session.currentOrderId);
+
+            if (order?.status === "paid") {
+                await sessionService.clearCurrentOrderId(sessionId);
+
+                const menu = await menuBuilder.buildMainMenu();
+                session.state = "MAIN_MENU";
+                session.choiceMap = menu.choiceMap;
+                await session.save();
+
+                return res.json({
+                    response: `✅ Payment successful!\nYour order has been confirmed 🍽️\n\n${menu.message}`
+                });
+            }
+        }
 
 
         if (!text) {
@@ -55,7 +73,7 @@ export const ChatHandlerController = async (
                 const orderId = newOrder._id.toString();
                 if (!orderId) {
                     const invalidMenu = await menuBuilder.buildInvalidOptionMenu();
-    
+
                     return res.status(200).json({ response: invalidMenu.message });
                 }
                 await sessionService.setCurrentOrderId(sessionId, orderId);
@@ -115,7 +133,7 @@ export const ChatHandlerController = async (
                     session.choiceMap = menu.choiceMap;
                     await session.save();
                     const response = `No order to place. Returning to main menu.\n\n${menu.message}`;
-    
+
                     return res.status(200).json({
                         response
                     });
@@ -153,7 +171,7 @@ export const ChatHandlerController = async (
                     session.choiceMap = menu.choiceMap;
                     await session.save();
                     const response = `No current order found. Returning to main menu.\n\n${menu.message}`;
-    
+
                     return res.status(200).json({
                         response
                     });
@@ -166,7 +184,7 @@ export const ChatHandlerController = async (
                     session.choiceMap = menu.choiceMap;
                     await session.save();
                     const response = `No current order found. Returning to main menu.\n\n${menu.message}`;
-    
+
                     return res.status(200).json({
                         response
                     });
@@ -189,21 +207,27 @@ export const ChatHandlerController = async (
                     session.choiceMap = menu.choiceMap;
                     await session.save();
                     const response = `No current order found. Returning to main menu.\n\n${menu.message}`;
-    
+
                     return res.status(200).json({
                         response
                     });
                 }
-                const paidOrder = await orderService.payOrder(session.currentOrderId);
-                await sessionService.clearCurrentOrderId(sessionId);
-                const menu = await menuBuilder.buildMainMenu();
-                session.state = "MAIN_MENU";
+
+
+                const currentOrder = await orderService.getCurrentOrder(sessionId);
+
+                if (!currentOrder.paymentReference) {
+                    await paymentService.initializePayment(currentOrder);
+                }
+                
+                const paidOrder = await orderService.getOrderById(currentOrder._id.toString());
+                const paymentLink = paidOrder.paymentLink;
+                const menu = await menuBuilder.buildPaymentMenu(paymentLink!);
+                session.state = "MAKING_PAYMENT";
                 session.choiceMap = menu.choiceMap;
                 await session.save();
-                const response = `Your order has been paid successfully! Returning to main menu.\n\n${menu.message}`;
-
                 return res.status(200).json({
-                    response
+                    response: menu.message
                 });
             }
 
@@ -217,14 +241,14 @@ export const ChatHandlerController = async (
                     await orderService.cancelOrder(session.currentOrderId);
                     await sessionService.clearCurrentOrderId(sessionId);
                     response = `Your order has been cancelled. Returning to main menu.\n\n${menu.message}`;
-    
+
                 } else {
                     response = `No current order to cancel. Returning to main menu.\n\n${menu.message}`;
-    
+
                 }
                 return res.status(200).json({
-                        response
-                    });
+                    response
+                });
             }
 
             default: {

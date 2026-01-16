@@ -3,4 +3,4 @@ import { ChatHandlerController } from "../controllers/chatHandler.controller.js"
 const router = Router();
 router.post("/", ChatHandlerController);
 export default router;
-//# sourceMappingURL=chat.routes.js.map
+//# sourceMappingURL=chat.route.js.map

@@ -59,7 +59,35 @@ class OrderService {
         const orders: IOrder[] = await Order.find({sessionId, status: { $in: ["paid", "cancelled"] } }).populate('items.itemId');
         return orders;
     }
+
+    async getOrderById(orderId: string) {
+        const order: IOrder | null = await Order.findById(orderId).populate('items.itemId');
+        if (!order) {
+            throw new Error("Order not found");
+        }
+        return order;
+    }
+
+    async getOrderByReference(reference: string) {
+        const order: IOrder | null = await Order.findOne({ paymentReference: reference });
+        if (!order) {
+            throw new Error("Order not found");
+        }
+        return order;
+    }
     
+    async attachPaymentDetails(orderId: string, paymentDetails: { reference: string; authorizationUrl: string; }) {
+        const {reference, authorizationUrl} = paymentDetails;
+        const order: IOrder | null = await Order.findByIdAndUpdate(
+            orderId,
+            { paymentReference: reference, paymentLink: authorizationUrl },
+            { new: true }
+        );
+        if (!order) {
+            throw new Error("Order not found");
+        }
+        return order;
+    }
 
     async payOrder(orderId: string) {
         const order: IOrder | null = await Order.findById(orderId);

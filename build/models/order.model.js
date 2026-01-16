@@ -7,7 +7,9 @@ const orderSchema = new Schema({
     sessionId: { type: String, required: true, index: true },
     items: [orderItemSchema],
     total: { type: Number, required: true },
-    status: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" }
+    status: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
+    paymentReference: { type: String },
+    paymentLink: { type: String }
 }, { timestamps: true });
 export const Order = mongoose.model("Order", orderSchema);
 //# sourceMappingURL=order.model.js.map

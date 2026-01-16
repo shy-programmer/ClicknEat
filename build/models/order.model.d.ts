@@ -8,6 +8,8 @@ export interface IOrder extends Document {
     items: IOrderItem[];
     total: number;
     status: "pending" | "paid" | "cancelled";
+    paymentReference?: string;
+    paymentLink?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
