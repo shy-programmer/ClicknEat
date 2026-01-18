@@ -7,5 +7,4 @@ export interface IItem extends Document {
     updatedAt?: Date;
 }
 export declare const Item: Model<IItem>;
-export default Item;
 //# sourceMappingURL=item.model.d.ts.map

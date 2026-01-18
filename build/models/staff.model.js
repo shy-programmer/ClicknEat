@@ -1,12 +1,13 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
-const userSchema = new Schema({
+const staffSchema = new Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["admin", "staff"], default: "staff" },
+    isDeleted: { type: Boolean, default: false }
 }, { timestamps: true });
-userSchema.pre("save", async function () {
+staffSchema.pre("save", async function () {
     if (!this.isModified("password"))
         return; //next();
     try {
@@ -17,8 +18,8 @@ userSchema.pre("save", async function () {
         //next(err as any);
     }
 });
-userSchema.methods.isValidPassword = async function (candidatePassword) {
+staffSchema.methods.isValidPassword = async function (candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
 };
-export const User = mongoose.model("User", userSchema);
-//# sourceMappingURL=user.model.js.map
+export const Staff = mongoose.model("Staff", staffSchema);
+//# sourceMappingURL=staff.model.js.map

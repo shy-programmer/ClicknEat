@@ -5,5 +5,4 @@ const itemSchema = new Schema({
     isAvailable: { type: Boolean, default: true },
 }, { timestamps: true });
 export const Item = mongoose.model('Item', itemSchema);
-export default Item;
 //# sourceMappingURL=item.model.js.map
