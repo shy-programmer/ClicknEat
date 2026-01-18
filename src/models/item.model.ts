@@ -19,4 +19,3 @@ const itemSchema: Schema<IItem> = new Schema(
 
 export const Item: Model<IItem> = mongoose.model<IItem>('Item', itemSchema);
 
-export default Item;

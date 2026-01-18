@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Staff Dashboard</title>
+<link rel="stylesheet" href="/staff/staff.css">
+
+</head>
+<body>
+  <h1>Staff Dashboard</h1>
+
+  <ul>
+    <li><a href="/items/items.html">Manage Items</a></li>
+    <li><button id="logout">Logout</button></li>
+  </ul>
+
+  <script>
+    document.getElementById("logout").onclick = () => {
+      localStorage.removeItem("token");
+      window.location.href = "/staff/login.html";
+    };
+  </script>
+</body>
+</html>
