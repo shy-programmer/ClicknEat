@@ -11,7 +11,10 @@ class StaffService {
             isDeleted: staff.isDeleted,
         };
         const token = encode(data);
-        return token;
+        return {
+            data,
+            token
+        };
     }
     ;
     async loginStaff(StaffData) {
@@ -35,7 +38,10 @@ class StaffService {
             isDeleted: staff.isDeleted,
         };
         const token = encode(data);
-        return token;
+        return {
+            data,
+            token
+        };
     }
     ;
     async getStaffById(staffId, auth) {

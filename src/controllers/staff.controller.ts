@@ -6,11 +6,12 @@ class StaffController {
 
   async signupStaff(req: Request, res: Response) {
     try {
-      const token = await staffService.signupStaff(req.body);
+      const {token, data} = await staffService.signupStaff(req.body);
 
       res.status(201).json({
         message: "Staff account created successfully",
-        token
+        token,
+        data
       });
     } catch (error: any) {
       res.status(400).json({
@@ -22,11 +23,12 @@ class StaffController {
 
   async loginStaff(req: Request, res: Response) {
     try {
-      const token = await staffService.loginStaff(req.body);
+      const {token, data} = await staffService.loginStaff(req.body);
 
       res.status(200).json({
         message: "Login successful",
-        token
+        token,
+        data
       });
     } catch (error: any) {
       res.status(401).json({

@@ -13,7 +13,10 @@ class StaffService {
   };
   const token = encode(data);
 
-  return token;
+  return {
+    data,
+    token
+  };
 };
 
 async loginStaff (StaffData: IStaff) {
@@ -38,7 +41,10 @@ async loginStaff (StaffData: IStaff) {
   };
   const token = encode(data);
 
-  return token;
+  return {
+    data,
+    token
+  };
 };
 
 async getStaffById (staffId: string, auth: payload) {

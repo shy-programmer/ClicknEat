@@ -1,19 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Items</title>
-<link rel="stylesheet" href="/item/item.css">
+  <meta charset="UTF-8" />
+  <title>Menu</title>
+  <link rel="stylesheet" href="item/item.css" />
 </head>
 <body>
-  <h2>Food Items</h2>
 
-  <form id="createItem">
-    <input id="name" placeholder="Item name" />
-    <input id="price" type="number" placeholder="Price" />
-    <button>Create Item</button>
-  </form>
+  <div class="container">
+    <button id="returnBtn" class="return-btn">← Return to Dashboard</button>
 
-  <ul id="items"></ul>
+    <h1>Food Items</h1>
+
+    <form class="form" id="form">
+      <input type="text" id="itemName" placeholder="Item name" />
+      <input type="number" id="itemPrice" placeholder="Price" />
+      <button id="createItemBtn">Create Item</button>
+    </form>
+
+    <ul id="itemsList"></ul>
+  </div>
 
   <script src="/item/item.js"></script>
 </body>
