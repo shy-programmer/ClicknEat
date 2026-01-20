@@ -47,7 +47,7 @@ class OrderService {
 
 
     async getCurrentOrder(sessionId: string) {
-        const order: IOrder | null = await Order.findOne({ sessionId, status: "pending" }).populate('items.itemId');
+        const order: IOrder | null = await Order.findOne({ sessionId, status: { $in: ["pending", "scheduled"] } }).populate('items.itemId');
         if (!order) {
             throw new Error("No current order found");
         }
@@ -69,6 +69,18 @@ class OrderService {
 
     async getOrderByReference(reference: string) {
         const order: IOrder | null = await Order.findOne({ paymentReference: reference });
+        if (!order) {
+            throw new Error("Order not found");
+        }
+        return order;
+    }
+
+    async scheduleOrder(orderId: string, scheduledFor: Date) {
+        const order: IOrder | null = await Order.findByIdAndUpdate(
+            orderId,
+            { status: "scheduled", scheduledFor },
+            { new: true }
+        );
         if (!order) {
             throw new Error("Order not found");
         }

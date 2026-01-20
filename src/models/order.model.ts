@@ -9,9 +9,10 @@ export interface IOrder extends Document {
   sessionId: string;       
   items: IOrderItem[];
   total: number;
-  status: "pending" | "paid" | "cancelled";
+  status: "pending" | "paid" | "scheduled" | "cancelled";
   paymentReference?: string;
   paymentLink?: string;
+  scheduledFor?: Date;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -26,9 +27,10 @@ const orderSchema: Schema<IOrder> = new Schema(
     sessionId: { type: String, required: true, index: true },
     items: [orderItemSchema],
     total: { type: Number, required: true },
-    status: { type: String, enum: ["pending", "paid", "cancelled"], default: "pending" },
+    status: { type: String, enum: ["pending", "paid", "scheduled", "cancelled"], default: "pending" },
     paymentReference: { type: String },
-    paymentLink: { type: String }
+    paymentLink: { type: String },
+    scheduledFor: { type: Date, required: false }
   },
   { timestamps: true }
 );

@@ -62,11 +62,13 @@ class MenuBuilder {
         Your order total is ₦${total}.\n
         Select an option:\n
         1 to proceed to payment.\n
+        2 to schedule delivery. \n
         97 to see current order.\n
         10 to cancel order.\n
         0 to go back to main menu.`;
         const choiceMap: Record<string, string> = {
             "1": "MAKING_PAYMENT",
+            "2": "SCHEDULE_ORDER",
             "97": "CURRENT_ORDER",
             "10": "CANCEL_ORDER",
             "0": "MAIN_MENU"
@@ -79,6 +81,29 @@ class MenuBuilder {
         ${authorizationUrl} \n
         Select 0 to return to the main menu.`;
         const choiceMap: Record<string, string> = {
+            "0": "MAIN_MENU"
+        };
+        return { message, choiceMap };
+    }
+
+    async buildScheduleOrderMenu(): Promise<MenuResponse> {
+        const message = `Please enter delivery time in this format: \n
+        YYYY-MM-DD HH:mm \n
+        Example: 2026-01-20 18:30 \n
+        OR \n
+        Select 0 to return to the main menu.`;
+        const choiceMap: Record<string, string> = {
+            "0": "MAIN_MENU"
+        };
+        return { message, choiceMap };
+    };
+
+    async buildScheduledConfirmationMenu(scheduledFor: Date): Promise<MenuResponse> {
+        const message = `Your order has been scheduled for ${scheduledFor.toLocaleString()}.\n
+        Select 1 to make payment now.\n
+        0 to return to the main menu.`;
+        const choiceMap: Record<string, string> = {
+            "1": "MAKING_PAYMENT",
             "0": "MAIN_MENU"
         };
         return { message, choiceMap };
