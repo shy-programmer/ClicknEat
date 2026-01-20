@@ -1,5 +1,5 @@
 import {IItem} from "../models/item.model.js";
-import {IOrder, IOrderItem} from "../models/order.model.js";
+import {IOrder} from "../models/order.model.js";
 
 type MenuResponse = {
     message: string,

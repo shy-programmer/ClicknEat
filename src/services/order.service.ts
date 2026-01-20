@@ -1,7 +1,6 @@
 import {Order, IOrder, IOrderItem} from "../models/order.model.js";
 import {Item, IItem} from "../models/item.model.js";
-import {Session, ISession} from "../models/session.model.js";
-import mongoose from "mongoose";
+import {Session} from "../models/session.model.js";
 
 class OrderService {
     async createOrder(sessionId: string, items: IOrderItem) {

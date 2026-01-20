@@ -1,11 +1,12 @@
 import express from "express";
 import staffController from "../controllers/staff.controller.js";
+import { ValidateNewUser, ValidateLogin } from "../validators/staff.validator.js";
 import { AuthenticateStaff } from "../middlewares/staff.middleware.js";
 
 const router = express.Router();
 
-router.post("/signup", staffController.signupStaff);
-router.post("/login", staffController.loginStaff);
+router.post("/signup", ValidateNewUser, staffController.signupStaff);
+router.post("/login", ValidateLogin, staffController.loginStaff);
 
 router.get("/:staffId", AuthenticateStaff, staffController.getStaffById);
 router.put("/:staffId", AuthenticateStaff, staffController.updateStaff);
