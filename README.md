@@ -1,4 +1,4 @@
-# ClicknEat 🍽️🤖
+## <h1>ClicknEat <img src="./src/public/images/ClicknEat.png" width="120" alt="ClicknEat logo" /></h1>
 
 ClicknEat is a restaurant chatbot application that allows customers to place food orders through a chat-style interface. It supports session-based users (no authentication required for customers), order management, order history, and Paystack payment integration. An admin/staff interface is also provided for managing menu items and availability.
 
