@@ -27,7 +27,7 @@ export const paymentCallbackController = async (
 
         await orderService.payOrder(order._id.toString());
 
-        res.redirect("http://localhost:3000/");
+        res.redirect("https://clickneat.onrender.com/");
     } catch (error) {
         console.error(error);
         res.status(500).send("Payment verification failed");
