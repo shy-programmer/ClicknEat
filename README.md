@@ -1,22 +1,22 @@
-ClicknEat 🍽️🤖
+# ClicknEat 🍽️🤖
 
 ClicknEat is a restaurant chatbot application that allows customers to place food orders through a chat-style interface. It supports session-based users (no authentication required for customers), order management, order history, and Paystack payment integration. An admin/staff interface is also provided for managing menu items and availability.
 
 
 ---
 
-🔗 Live Demo
+## 🔗 Live Demo
 
-> Add your deployed URL here (Render / Railway / Fly.io / etc.)
+> https://clickneat.onrender.com/ 
 
 
 
 
 ---
 
-✨ Features
+## ✨ Features
 
-Customer (Chatbot)
+### Customer (Chatbot)
 
 Chat-style UI for ordering food
 
@@ -37,7 +37,7 @@ Schedule orders
 Automatic return to chatbot after successful payment
 
 
-Staff / Admin
+### Staff / Admin
 
 Staff authentication using JWT
 
@@ -53,9 +53,9 @@ Admin-only actions (where applicable)
 
 ---
 
-🧱 Tech Stack
+## 🧱 Tech Stack
 
-Backend
+### Backend
 
 Node.js
 
@@ -70,7 +70,7 @@ JWT (Staff authentication)
 Paystack API (test environment)
 
 
-Frontend
+### Frontend
 
 HTML
 
@@ -82,8 +82,9 @@ Vanilla JavaScript (Fetch API)
 
 ---
 
-📂 Project Structure
+## 📂 Project Structure
 
+```bash
 src/
 ├── app.ts
 ├── server.ts
@@ -102,44 +103,53 @@ src/
     ├── staff/
     ├── item/
     └── images/
-
+```
 
 ---
 
-⚙️ Environment Variables
+## ⚙️ Environment Variables
 
-Create a .env file in the root directory:
+Create a `.env` file in the root directory and copy from `example.env`:
 
+```bash
 PORT=5000
-MONGO_URI=your_mongodb_connection_string
+MONGO_URL=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 PAYSTACK_SECRET_KEY=sk_test_xxxxxxxxx
 PAYSTACK_CALLBACK_URL=http://localhost:5000/api/clickneat/payment/callback
-
+```
 
 ---
 
-🚀 Running the Application Locally
+## 🚀 Running the Application Locally
 
-1️⃣ Clone the repository
+### 1️⃣ Clone the repository
 
+```bash
 git clone https://github.com/your-username/clickneat.git
 cd clickneat
+```
 
-2️⃣ Install dependencies
+### 2️⃣ Install dependencies
 
+```bash
 npm install
+```
 
-3️⃣ Start the development server
+### 3️⃣ Start the development server
 
+```bash
 npm run dev
+```
 
 or for production:
 
+```bash
 npm run build
 npm start
+```
 
-4️⃣ Open the app
+### 4️⃣ Open the app
 
 Chatbot: http://localhost:5000/
 
@@ -151,56 +161,47 @@ Item management: http://localhost:5000/menu
 
 ---
 
-💬 Chatbot Flow
+## 💬 Chatbot Flow
 
 When a user lands on the chatbot page, the bot responds with:
 
+```bash
 1 → Place an order
 99 → Checkout order
 98 → View order history
 97 → View current order
 0 → Cancel order
+```
 
 The chatbot responds dynamically based on numeric input and maintains state using a session ID stored in the browser.
 
 
 ---
 
-💳 Payment Flow (Paystack)
+## 💳 Payment Flow (Paystack)
 
 1. User selects Checkout (99)
 
-
 2. Backend initializes Paystack transaction
-
 
 3. Bot returns a clickable payment link
 
-
 4. User completes payment on Paystack
-
 
 5. Paystack redirects to callback endpoint
 
-
 6. Backend verifies payment
-
 
 7. User is redirected back to chatbot
 
-
 8. Bot notifies user of successful payment
-
-
 
 > Paystack is configured in test mode.
 
 
-
-
 ---
 
-🧪 Validation & Error Handling
+## 🧪 Validation & Error Handling
 
 Input validation for menu options
 
@@ -214,67 +215,7 @@ Graceful error messages from bot
 
 ---
 
-✅ Assignment Requirement Coverage
+## 👤 Author
 
-Requirement	Status
-
-Chat-style interface	✅ Done
-Session-based users	✅ Done
-Numeric menu options	✅ Done
-Place order	✅ Done
-Checkout order	✅ Done
-Order history	✅ Done
-Current order	✅ Done
-Cancel order	✅ Done
-Payment option	✅ Done
-Paystack integration	✅ Done
-Redirect after payment	✅ Done
-Input validation	✅ Done
-Optional scheduling	⚠️ Not implemented (optional)
-
-
-
----
-
-📝 Optional Improvement: Order Scheduling
-
-A future enhancement could allow users to schedule orders by:
-
-Asking for a preferred delivery time
-
-Storing scheduledFor: Date on the order
-
-Processing the order later via a cron job
-
-
-
----
-
-📦 Deployment
-
-You can deploy using:
-
-Render
-
-Railway
-
-Fly.io
-
-
-Make sure to:
-
-Set environment variables on the platform
-
-Use MongoDB Atlas
-
-Update Paystack callback URL
-
-
-
----
-
-👤 Author
-
-ClicknEat – Restaurant Chatbot Project
-
-Built for backend assessment & portfolio showcase 🚀
+**Abdulazeez Arowolo (Shy Programmer)**
+GitHub: [https://github.com/shy-programmer](https://github.com/shy-programmer)
