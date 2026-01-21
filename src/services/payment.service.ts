@@ -22,7 +22,7 @@ class PaymentService {
           orderId: order._id.toString(),
           sessionId: order.sessionId,
         },
-        callback_url: "http://localhost:3000/api/clickneat/payment/callback",
+        callback_url: "https://clickneat.onrender.com/api/clickneat/payment/callback",
       }),
     });
 
