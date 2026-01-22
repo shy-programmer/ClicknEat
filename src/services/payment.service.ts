@@ -21,8 +21,8 @@ class PaymentService {
         metadata: {
           orderId: order._id.toString(),
           sessionId: order.sessionId,
-        },
-        callback_url: "https://clickneat.onrender.com/api/clickneat/payment/callback",
+        }//,
+        // callback_url: "https://clickneat.onrender.com/api/clickneat/payment/callback",
       }),
     });
 
