@@ -17,8 +17,7 @@ class PaymentService {
                 metadata: {
                     orderId: order._id.toString(),
                     sessionId: order.sessionId,
-                },
-                callback_url: "http://localhost:3000/api/clickneat/payment/callback",
+                }
             }),
         });
         const data = await response.json();

@@ -30,6 +30,28 @@ export const ChatHandlerController = async (req, res) => {
             });
         }
         const action = session.choiceMap[text];
+        if (session.state === "SCHEDULE_ORDER" && action !== "MAIN_MENU") {
+            const scheduledDate = new Date(text);
+            const currentOrder = await orderService.getCurrentOrder(sessionId);
+            if (!currentOrder) {
+                const menu = await menuBuilder.buildMainMenu();
+                session.state = "MAIN_MENU";
+                session.choiceMap = menu.choiceMap;
+                await session.save();
+                const response = `No current order found. Returning to main menu.\n\n${menu.message}`;
+                return res.status(200).json({
+                    response
+                });
+            }
+            await orderService.scheduleOrder(currentOrder._id.toString(), scheduledDate);
+            const menu = await menuBuilder.buildScheduledConfirmationMenu(scheduledDate);
+            session.state = "MAKING_PAYMENT";
+            session.choiceMap = menu.choiceMap;
+            await session.save();
+            return res.status(200).json({
+                response: menu.message
+            });
+        }
         if (!action) {
             const invalidMenu = await menuBuilder.buildInvalidOptionMenu();
             return res.status(200).json({
@@ -176,6 +198,25 @@ export const ChatHandlerController = async (req, res) => {
                 const paymentLink = paidOrder.paymentLink;
                 const menu = await menuBuilder.buildPaymentMenu(paymentLink);
                 session.state = "MAKING_PAYMENT";
+                session.choiceMap = menu.choiceMap;
+                await session.save();
+                return res.status(200).json({
+                    response: menu.message
+                });
+            }
+            case "SCHEDULE_ORDER": {
+                if (!session.currentOrderId) {
+                    const menu = await menuBuilder.buildMainMenu();
+                    session.state = "MAIN_MENU";
+                    session.choiceMap = menu.choiceMap;
+                    await session.save();
+                    const response = `No current order found. Returning to main menu.\n\n${menu.message}`;
+                    return res.status(200).json({
+                        response
+                    });
+                }
+                const menu = await menuBuilder.buildScheduleOrderMenu();
+                session.state = "SCHEDULE_ORDER";
                 session.choiceMap = menu.choiceMap;
                 await session.save();
                 return res.status(200).json({

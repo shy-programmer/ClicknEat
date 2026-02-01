@@ -15,7 +15,7 @@ export const paymentCallbackController = async (req, res) => {
             return res.send("Order not found");
         }
         await orderService.payOrder(order._id.toString());
-        res.redirect("http://localhost:3000/");
+        res.redirect("https://clickneat.onrender.com/");
     }
     catch (error) {
         console.error(error);

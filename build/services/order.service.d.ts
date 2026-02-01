@@ -6,6 +6,7 @@ declare class OrderService {
     getOrderHistory(sessionId: string): Promise<IOrder[]>;
     getOrderById(orderId: string): Promise<IOrder>;
     getOrderByReference(reference: string): Promise<IOrder>;
+    scheduleOrder(orderId: string, scheduledFor: Date): Promise<IOrder>;
     attachPaymentDetails(orderId: string, paymentDetails: {
         reference: string;
         authorizationUrl: string;

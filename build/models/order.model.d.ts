@@ -7,9 +7,10 @@ export interface IOrder extends Document {
     sessionId: string;
     items: IOrderItem[];
     total: number;
-    status: "pending" | "paid" | "cancelled";
+    status: "pending" | "paid" | "scheduled" | "cancelled";
     paymentReference?: string;
     paymentLink?: string;
+    scheduledFor?: Date;
     createdAt?: Date;
     updatedAt?: Date;
 }

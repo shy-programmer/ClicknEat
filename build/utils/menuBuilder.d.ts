@@ -10,6 +10,8 @@ declare class MenuBuilder {
     buildItemAddedMenu(item: IItem): Promise<MenuResponse>;
     buildOrderCheckoutMenu(total: number): Promise<MenuResponse>;
     buildPaymentMenu(authorizationUrl: string): Promise<MenuResponse>;
+    buildScheduleOrderMenu(): Promise<MenuResponse>;
+    buildScheduledConfirmationMenu(scheduledFor: Date): Promise<MenuResponse>;
     buildOrderHistoryMenu(orders: IOrder[]): Promise<MenuResponse>;
     buildCurrentOrderMenu(order: IOrder): Promise<MenuResponse>;
     buildInvalidOptionMenu(): Promise<MenuResponse>;

@@ -48,7 +48,7 @@ async loginStaff (StaffData: IStaff) {
 };
 
 async getStaffById (staffId: string, auth: payload) {
-  if (auth.id !== staffId || auth.role !== "admin") {
+  if (auth.id !== staffId && auth.role !== "admin") {
     throw new Error("Access denied")
   }
   const staff = Staff.findOne({ _id: staffId, isDeleted: false });
@@ -74,7 +74,7 @@ async updateStaff (staffId: string, StaffData: IStaff, auth: payload) {
 };
 
 async softDeleteStaff (staffId: string, auth: payload) {
-  if (auth.id !== staffId|| auth.role !== "admin") {
+  if (auth.id !== staffId && auth.role !== "admin") {
     throw new Error("Access denied")
   }
   // Soft delete: Set isDeleted to true instead of removing the document
@@ -90,7 +90,7 @@ async softDeleteStaff (staffId: string, auth: payload) {
 };
 
 async restoreStaff (staffId: string, auth: payload) {
-  if (auth.id !== staffId|| auth.role !== "admin") {
+  if (auth.id !== staffId && auth.role !== "admin") {
     throw new Error("Access denied")
   }
   // Restore: Set isDeleted to false
