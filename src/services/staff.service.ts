@@ -1,6 +1,11 @@
 import {Staff, IStaff}  from "../models/staff.model.js"
 import {payload, encode} from "../utils/jwt.js"
 
+interface LoginDTO {
+  email: string;
+  password: string;
+}
+
 class StaffService {
   async signupStaff (StaffData: IStaff) {
   const staff = await Staff.create(StaffData);
@@ -19,7 +24,7 @@ class StaffService {
   };
 };
 
-async loginStaff (StaffData: IStaff) {
+async loginStaff (StaffData: LoginDTO) {
   const { email, password } = StaffData;
   if (!email || !password) {
     throw new Error("Email and Password are required")
